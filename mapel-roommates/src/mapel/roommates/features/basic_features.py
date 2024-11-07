@@ -335,13 +335,18 @@ def num_solutions(instance):
     #     print(f'Deu diferente. Otimizado: {out}, ruim: {other}')
 
         print('', file=file)
+    print(f'num_solutoins: {out}')
     return out
 
 def _num_solutions(matching, rank_matrix, file, pair_added=None):
     num_agents = len(matching)
     minimum = 0 if pair_added is None else min(pair_added[0], pair_added[1])
     
-    out = int(is_stable(rank_matrix, matching))
+    out = 0
+    if is_stable(rank_matrix, matching):
+        out += 1
+        print(str(matching)[1:-1].replace(',', ''), file=file)
+
     for ag1 in range(minimum, num_agents):
         for ag2 in range(ag1+1, num_agents):
             if matching[ag1] != -1 or matching[ag2] != -1:
@@ -349,89 +354,8 @@ def _num_solutions(matching, rank_matrix, file, pair_added=None):
             updated_matching = copy.deepcopy(matching)
             updated_matching[ag1] = ag2
             updated_matching[ag2] = ag1
-            print(str(updated_matching)[1:-1].replace(',', ''), file=file)
             out += _num_solutions(updated_matching, rank_matrix, file, pair_added=(ag1, ag2))
     return out
-
-def get_matching_from_stack(stack):
-    return
-
-def __num_solutions(rank_matrix):
-    num_agents = len(rank_matrix)
-    matching = [-1 for _ in range(len(num_agents))]
-    minimum = 0
-    out = int(is_stable(rank_matrix, matching))
-
-    stack = []
-    ag1 = 0
-    ag2 = 1
-    while True:
-        stack.append((ag1, ag2))
-        curr_matching = get_matching_from_stack(stack)
-        if is_stable(rank_matrix, curr_matching):
-            out += 1
-        return out
-
-'''
-14 agentes: 135135, 37 segundos com a solução otimizada        
-
-n agentes:
-num solucoes com n: prod(n - 2*i), i in [0, n/2]
-num solucoes com n-2: prod(n - 2*i), i in [0, n/2 -1]
-
-num solucoes com qualquer tamanho:
-sum (  prod(n - 2*i), i in [0, n/2 -j]  ), j in [0, n/2]
-
-'''
-
-# For matchings with unmatched agents, this counts them multiple times
-# def number_of_solutions(instance) -> int:
-#     def all_pairs(lst):
-#         if len(lst) < 2:
-#             yield []
-#             return
-#         if len(lst) % 2 == 1:
-#             # Handle odd length list
-#             for i in range(len(lst)):
-#                 for result in all_pairs(lst[:i] + lst[i+1:]):
-#                     yield result
-#         else:
-#             a = lst[0]
-#             for i in range(1,len(lst)):
-#                 pair = (a,lst[i])
-#                 for rest in all_pairs(lst[1:i]+lst[i+1:]):
-#                     yield [pair] + rest    
-    
-#     num_solutions = 0
-#     rank_matrix = get_rank_matrix(instance.votes)
-#     diff_sol = {}
-
-#     m = [-1 for _ in range(len(instance.votes))]
-#     if is_stable(rank_matrix, m):
-#         num_solutions += 1
-
-#     for matching in all_pairs(list(range(len(instance.votes)))):
-
-#         for mask in range(1, 2**(len(instance.votes)//2)):
-
-#             m = [-1 for _ in range(len(instance.votes))]
-#             for i, match in enumerate(matching):
-#                 if ((mask >> i) & 1) == 1:
-#                     m[match[0]] = match[1]
-#                     m[match[1]] = match[0]
-
-#             if is_stable(rank_matrix, m):
-#                 if str(m) in diff_sol:
-#                     diff_sol[str(m)] += 1
-#                 else:
-#                     diff_sol[str(m)] = 1
-#                 num_solutions += 1
-
-#     # print(f'num_solutions: {num_solutions}')
-#     for sol in diff_sol.items():
-#         if sol[1] > 1:
-#             print(sol[0] + " " + str(sol[1]))
-#     return num_solutions
 
 
 # NEW 15.03.2022

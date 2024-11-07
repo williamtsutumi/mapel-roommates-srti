@@ -78,10 +78,12 @@ def run_single_thread(experiment: Experiment,
     if experiment.is_exported:
 
         file_name = f'{experiment.distance_id}_p{t}.csv'
-        path = os.path.join(os.getcwd(), "election", experiment.experiment_id, "distances",
-                            file_name)
+        path = os.path.join(os.getcwd(), "election", experiment.experiment_id, "distances")
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path_to_file = os.path.join(path, file_name)
 
-        with open(path, 'w+', newline='') as csv_file:
+        with open(path_to_file, 'w+', newline='') as csv_file:
             writer = csv.writer(csv_file, delimiter=';')
             writer.writerow(
                 ["instance_id_1", "instance_id_2", "distance", "time"])

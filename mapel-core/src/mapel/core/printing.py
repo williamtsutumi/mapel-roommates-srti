@@ -66,7 +66,7 @@ def print_map_2d(
         axis: bool = False,
         individual: bool = False,
         textual: list[str] = None,
-        textual_size: int = 16,
+        textual_size: int = 10,
         title: str = None,
         bbox_inches='tight',
         saveas: str = None,
@@ -230,7 +230,7 @@ def print_map_2d_colored_by_feature(
         title_size: int = 16,
         ticks_pos=None,
         omit: list = None,
-        textual_size: int = 16,
+        textual_size: int = 10,
         figsize=(6.4, 6.4),
         strech=None,
         colors=None,
@@ -339,7 +339,7 @@ def print_map_2d_colored_by_features(
         column_id: str = 'value',
         title_size: int = 16,
         ticks_pos=None,
-        textual_size: int = 16,
+        textual_size: int = 10,
         figsize=(20, 10)
 ) -> None:
     if textual is None:
@@ -1034,7 +1034,7 @@ def basic_coloring(experiment=None, ax=None, dim=2, textual=None):
                            color=family.color,
                            label=label,
                            alpha=family.alpha,
-                           s=family.ms,
+                           s=family.ms if not family.label in textual else 250,
                            marker=family.marker)
             elif dim == 3:
                 ax.scatter(experiment.coordinates_by_families[family.family_id][0],
@@ -1407,6 +1407,9 @@ def _add_textual(experiment=None, textual=None, ax=None, size=16,
                 color=color, alpha=alpha, zorder=100,
                 bbox=dict(boxstyle=boxstyle, ec=b_color, fc="white")
                 )
+    
+    if not textual[0] in ['Empty', 'Ties', 'ID', 'MD', 'MA', 'CH']:
+        return
 
     for name in textual:
         name_id = name_from_label(experiment, name)

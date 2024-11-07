@@ -9,6 +9,7 @@ import itertools
 from multiprocessing import Process
 from time import sleep
 import time
+import os
 
 from mapel.core.objects.Experiment import Experiment
 from mapel.roommates.objects.RoommatesFamily import RoommatesFamily
@@ -360,6 +361,11 @@ class RoommatesExperiment(Experiment):
         feature_dict = {'value': {}, 'time': {}, 'std': {}}
 
         features_with_std = {'avg_num_of_bps_for_rand_matching'}
+
+        if feature_id == 'number_of_solutions':
+            file = os.path.join(os.getcwd(), 'all-solutions.txt')
+            if os.path.isfile(file):
+                os.remove(file)
 
         num_iterations = 1
         if 'num_iterations' in feature_params:
