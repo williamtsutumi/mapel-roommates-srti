@@ -2,8 +2,8 @@ import mapel.roommates as mapel
 import random
 import math
 
-size = 2
-num_agents = 6
+size = 5
+num_agents = 14
 
 def add_ti(list, incomplete_percent, ties_percent):
     agents_to_remove = int(len(list) * incomplete_percent)
@@ -171,18 +171,18 @@ for family in sr_families:
 textual = ['Empty', 'Ties', 'ID', 'MD', 'MA', 'CH']
 figsize = (8,8)
 
-saveas = 'experiment'
+saveas = 'otherstuff'
 experiment.compute_distances(distance_id='mutual_attraction', num_threads=5)
 experiment.embed_2d(embedding_id='kk')
 
 experiment.print_map_2d(show=False, textual=textual, saveas=saveas, legend_pos=(0,0), figsize=figsize)
 
-# for family in sr_families:
-#     save_name = family['label'].replace('.', '').replace(',', '')
-#     experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
-# for family in srti_families:
-#     save_name = family['label'].replace('.', '').replace(',', '')
-#     experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
+for family in sr_families:
+    save_name = family['label'].replace('.', '').replace(',', '')
+    experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
+for family in srti_families:
+    save_name = family['label'].replace('.', '').replace(',', '')
+    experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
 
 mallows_md_families = [fam['label'] for fam in srti_families if fam['culture'] == 'malasym']
 experiment.print_map_2d(show=False, textual=mallows_md_families, saveas='mallows_md_highlighted', legend=False, figsize=figsize)
@@ -194,13 +194,13 @@ experiment.print_map_2d(show=False, textual=expectation_families, saveas='expect
 experiment.compute_feature(feature_id='number_of_solutions')
 experiment.compute_feature(feature_id='dist_from_id_1')
 experiment.compute_feature(feature_id='mutuality')
-# experiment.compute_feature(feature_id='min_num_bps_matching')
+experiment.compute_feature(feature_id='min_num_bps_matching')
 experiment.compute_feature(feature_id='avg_num_of_bps_for_rand_matching')
 experiment.compute_feature(feature_id='num_of_bps_min_weight')
 
 experiment.print_map_2d_colored_by_feature(show=False, textual=textual, feature_id='number_of_solutions', saveas=saveas+'_numsolutions', figsize=figsize, scale='log')
 experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='dist_from_id_1', saveas=saveas+'_rankdistortion', figsize=figsize)
 experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='mutuality', saveas=saveas+'_mutuality', figsize=figsize)
-# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='min_num_bps_matching', saveas=saveas+'_minbps', figsize=figsize)
+experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='min_num_bps_matching', saveas=saveas+'_minbps', figsize=figsize)
 experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='avg_num_of_bps_for_rand_matching', saveas=saveas+'_avgbps', figsize=figsize)
 experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='num_of_bps_min_weight', saveas=saveas+'_numbps_minweight', figsize=figsize, scale='log')

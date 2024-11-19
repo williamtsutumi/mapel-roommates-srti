@@ -19,6 +19,7 @@ import time
 import networkx as nx
 import copy
 import os
+import math
 
 sys.setrecursionlimit(10000)
 # warnings.filterwarnings("error")
@@ -170,6 +171,8 @@ def rank_matching(instance,best,summed):
     return int(m.objVal), matching
 
 def min_num_bps_matching(instance):
+    if instance.culture_id == 'fully_incomplete':
+        return 0
     num_agents=len(instance.votes)
     m = gp.Model("mip1")
     m.setParam('OutputFlag', False)
@@ -197,7 +200,7 @@ def min_num_bps_matching(instance):
             for t in range(0,index):
                 for agnt in instance.votes[j][t]:
                     better_pairs.append([j,agnt])
-        m.addConstr(gp.quicksum(x[a[0], a[1]] for a in better_pairs) >= 1-y[i,j])
+            m.addConstr(gp.quicksum(x[a[0], a[1]] for a in better_pairs) >= 1-y[i,j])
 
     m.setObjective(opt, GRB.MINIMIZE)
     m.optimize()
@@ -265,35 +268,34 @@ def num_of_bps_maximumWeight(instance) -> int:
 
 #------
 def is_stable(rank_matrix, match):
-        prefer_be_unmatched = len(rank_matrix)-1
-        for i in range(len(rank_matrix)):
-            for j in range(i, len(rank_matrix)):
-                if i == j:
-                    continue
-                # Se formam um par em 'match'
-                if (i, j) == (i, match[i]):
-                    continue
+    num_agents = len(rank_matrix)
+    for i in range(num_agents):
+        for j in range(i+1, num_agents):
+            # if j == match[i]:
+            #     continue
 
-                i_rank_in_j = rank_matrix[i][j]
-                i_rank_match = rank_matrix[i][match[i]] if match[i] != -1 else prefer_be_unmatched
-                j_rank_in_i = rank_matrix[j][i]
-                j_rank_match = rank_matrix[j][match[j]] if match[j] != -1 else prefer_be_unmatched
+            i_condition = rank_matrix[i][j] < rank_matrix[i][match[i]] \
+                or (match[i] == -1 and is_acceptable(rank_matrix, i, j))
+            j_condition = rank_matrix[j][i] < rank_matrix[j][match[j]] \
+                or (match[j] == -1 and is_acceptable(rank_matrix, j, i))
+            
+            if i_condition and j_condition:
+                return False
+    return True
 
-                if match[i] != -1 and prefer_be_unmatched == i_rank_match:
-                    return False
-                if match[j] != -1 and prefer_be_unmatched == j_rank_match:
-                    return False
-                if i_rank_in_j < i_rank_match and j_rank_in_i < j_rank_match:
-                    return False
-        return True
+def is_acceptable(rank_matrix, i, j):
+    '''
+        Returns True if j is acceptable for i
+    '''
+    return rank_matrix[i][j] < len(rank_matrix[0])
+
 def get_rank_matrix(mat):
-        # out[i][j] == rank of j in i's pref list
-        # contains one additional column (the last one), having len(mat[0])+1 values
-        out = [[-1 for _ in range(len(mat[0])+1)] for _ in range(len(mat))]
-        for i in range(len(out)):
-            for j in range(len(out[i])):
-                out[i][j] = get_rank(mat, i, j)
-        return out
+    '''
+        out[i][j] == rank of j in i's pref list.
+        if j is not in i's pref list, out[i][j] == num_agents-1
+    '''
+    num_agents = len(mat)
+    return [[get_rank(mat, i, j) for j in range(num_agents)] for i in range(num_agents)]
 #-------
 
 def export_solutions(instance, file):
@@ -311,9 +313,9 @@ def export_solutions(instance, file):
     print('preference lists:', file=file)
     for pref_list in instance.votes:
         for col in pref_list:
-            print(f'{len(col)}: ', end='', file=file)
             for agent in col:
                 print(f'{agent} ', end='', file=file)
+            print(', ', end='', file=file)
         print('', file=file)
     print('weakly stable matches:', file=file)
 
@@ -321,31 +323,29 @@ def export_solutions(instance, file):
 def num_solutions(instance):
     path_to_file = os.path.join(os.getcwd(), 'all-solutions.txt')
 
-    with open(path_to_file, 'a') as file:
-        export_solutions(instance, file)
+    rank_matrix = get_rank_matrix(instance.votes)
+    matching = [-1 for _ in range(len(instance.votes))]
 
-        rank_matrix = get_rank_matrix(instance.votes)
-        matching = [-1 for _ in range(len(instance.votes))]
-        
-        out = _num_solutions(matching, rank_matrix, file=file)
+    if instance.culture_id in ['fully_tied', 'fully_incomplete']:
+        out = _num_solutions(matching, rank_matrix)
+    else:
+        with open(path_to_file, 'a') as file:
+            export_solutions(instance, file)
+            out = _num_solutions(matching, rank_matrix, file=file)
+            print('', file=file)
 
-    # print(f'number of solutions: {out}')
-    # other = number_of_solutions(instance)
-    # if out != other:
-    #     print(f'Deu diferente. Otimizado: {out}, ruim: {other}')
-
-        print('', file=file)
-    print(f'num_solutoins: {out}')
+    print(f'num_solutions: {out}')
     return out
 
-def _num_solutions(matching, rank_matrix, file, pair_added=None):
+def _num_solutions(matching, rank_matrix, pair_added=None, file=None):
     num_agents = len(matching)
     minimum = 0 if pair_added is None else min(pair_added[0], pair_added[1])
     
     out = 0
     if is_stable(rank_matrix, matching):
         out += 1
-        print(str(matching)[1:-1].replace(',', ''), file=file)
+        if file:
+            print(str(matching)[1:-1].replace(',', ''), file=file)
 
     for ag1 in range(minimum, num_agents):
         for ag2 in range(ag1+1, num_agents):
@@ -354,7 +354,7 @@ def _num_solutions(matching, rank_matrix, file, pair_added=None):
             updated_matching = copy.deepcopy(matching)
             updated_matching[ag1] = ag2
             updated_matching[ag2] = ag1
-            out += _num_solutions(updated_matching, rank_matrix, file, pair_added=(ag1, ag2))
+            out += _num_solutions(updated_matching, rank_matrix, pair_added=(ag1, ag2), file=file)
     return out
 
 
@@ -384,11 +384,11 @@ def dist_from_id_2(instance) -> int:
     return score
 
 def get_rank(matrix, a1, a2):
-        '''
-            Returns the rank of a2 in the a1's preference list
-            if not present, return len(matrix)-1 (one more than max value)
-        '''
-        for i, lst in enumerate(matrix[a1]):
-            if a2 in lst:
-                return i
-        return len(matrix)-1
+    '''
+        Returns the rank of a2 in the a1's preference list
+        if not present, return len(matrix)-1 (one more than max value)
+    '''
+    for i, lst in enumerate(matrix[a1]):
+        if a2 in lst:
+            return i
+    return len(matrix)-1

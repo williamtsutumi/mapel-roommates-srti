@@ -89,7 +89,6 @@ def generate_roommates_symmetric_votes(num_agents: int = None, **kwargs):
         agents = next(agents)
 
     votes = np.zeros([num_agents, num_agents - 1], dtype=int)
-
     for pos, partition in enumerate(rounds):
         for x, y in partition:
             votes[x][pos] = y
@@ -122,7 +121,6 @@ def generate_roommates_chaos_votes(num_agents: int = None, **kwargs):
             for i in range(num_agents):
                 if k1 != i and matrix[i][matrix[k1][k2]] == matrix[k1][k2]:
                     votes[k1][k2] = i
-    
     return [[[votes[i][j]] for j in range(len(votes[i]))] for i in range(len(votes))]
 
 

@@ -1034,7 +1034,7 @@ def basic_coloring(experiment=None, ax=None, dim=2, textual=None):
                            color=family.color,
                            label=label,
                            alpha=family.alpha,
-                           s=family.ms if not family.label in textual else 250,
+                           s=family.ms if not family.label in textual else 100,
                            marker=family.marker)
             elif dim == 3:
                 ax.scatter(experiment.coordinates_by_families[family.family_id][0],
@@ -1408,7 +1408,7 @@ def _add_textual(experiment=None, textual=None, ax=None, size=16,
                 bbox=dict(boxstyle=boxstyle, ec=b_color, fc="white")
                 )
     
-    if not textual[0] in ['Empty', 'Ties', 'ID', 'MD', 'MA', 'CH']:
+    if (textual is not None) and not (textual[0] in ['Empty', 'Ties', 'ID', 'MD', 'MA', 'CH']):
         return
 
     for name in textual:
