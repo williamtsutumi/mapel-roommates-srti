@@ -2,8 +2,8 @@ import mapel.roommates as mapel
 import random
 import math
 
-size = 5
-num_agents = 14
+size = 0
+num_agents = 6
 
 def add_ti(list, incomplete_percent, ties_percent):
     agents_to_remove = int(len(list) * incomplete_percent)
@@ -27,30 +27,28 @@ def add_ti(list, incomplete_percent, ties_percent):
             list[i].append([])
     return list
 
-
 experiment = mapel.prepare_online_roommates_experiment()
 
-
-experiment.add_instance(culture_id='fully_incomplete',
-                        label='Empty',
-                        num_agents=num_agents,
-                        color='green', marker='+', ms = 125)
-experiment.add_instance(culture_id='fully_tied',
-                        label='Ties',
-                        num_agents=num_agents,
-                        color='purple', marker='+', ms = 125)
-experiment.add_instance(culture_id='id',
-                        label='ID',
-                        num_agents=num_agents,
-                        color='red', marker='+', ms = 125)
-experiment.add_instance(culture_id='symmetric',
-                        label='MA',
-                        num_agents=num_agents,
-                        color='orange', marker='+', ms = 125)
-experiment.add_instance(culture_id='asymmetric',
-                        label='MD',
-                        num_agents=num_agents,
-                        color='blue', marker='+', ms = 125)
+# experiment.add_instance(culture_id='fully_incomplete',
+#                         label='Empty',
+#                         num_agents=num_agents,
+#                         color='green', marker='+', ms = 125)
+# experiment.add_instance(culture_id='fully_tied',
+#                         label='Ties',
+#                         num_agents=num_agents,
+#                         color='purple', marker='+', ms = 125)
+# experiment.add_instance(culture_id='id',
+#                         label='ID',
+#                         num_agents=num_agents,
+#                         color='red', marker='+', ms = 125)
+# experiment.add_instance(culture_id='symmetric',
+#                         label='MA',
+#                         num_agents=num_agents,
+#                         color='orange', marker='+', ms = 125)
+# experiment.add_instance(culture_id='asymmetric',
+#                         label='MD',
+#                         num_agents=num_agents,
+#                         color='blue', marker='+', ms = 125)
 experiment.add_instance(culture_id='chaos',
                         label='CH',
                         num_agents=num_agents,
@@ -151,21 +149,21 @@ srti_families = [
 
 ] # 35 cultures
 
-for family in srti_families:
-    experiment.add_family(culture_id=family['culture'],
-                        family_id=family['label'],
-                        label=family['label'],
-                        params=family['params'],
-                        num_agents=num_agents, size=size,
-                        color=family['color'], marker=family['marker'])
+# for family in srti_families:
+#     experiment.add_family(culture_id=family['culture'],
+#                         family_id=family['label'],
+#                         label=family['label'],
+#                         params=family['params'],
+#                         num_agents=num_agents, size=size,
+#                         color=family['color'], marker=family['marker'])
 
-for family in sr_families:
-    experiment.add_family(culture_id=family['culture'],
-                            family_id=family['label'],
-                            label=family['label'],
-                            params=family['params'],
-                            num_agents=num_agents, size=size,
-                            color=family['color'], marker=family['marker'])
+# for family in sr_families:
+#     experiment.add_family(culture_id=family['culture'],
+#                             family_id=family['label'],
+#                             label=family['label'],
+#                             params=family['params'],
+#                             num_agents=num_agents, size=size,
+#                             color=family['color'], marker=family['marker'])
 
 
 textual = ['Empty', 'Ties', 'ID', 'MD', 'MA', 'CH']
@@ -175,32 +173,32 @@ saveas = 'otherstuff'
 experiment.compute_distances(distance_id='mutual_attraction', num_threads=5)
 experiment.embed_2d(embedding_id='kk')
 
-experiment.print_map_2d(show=False, textual=textual, saveas=saveas, legend_pos=(0,0), figsize=figsize)
+# experiment.print_map_2d(show=False, textual=textual, saveas=saveas, legend_pos=(0,0), figsize=figsize)
 
-for family in sr_families:
-    save_name = family['label'].replace('.', '').replace(',', '')
-    experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
-for family in srti_families:
-    save_name = family['label'].replace('.', '').replace(',', '')
-    experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
+# for family in sr_families:
+#     save_name = family['label'].replace('.', '').replace(',', '')
+#     experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
+# for family in srti_families:
+#     save_name = family['label'].replace('.', '').replace(',', '')
+#     experiment.print_map_2d(show=False, textual=[family['label']], saveas=save_name, legend=False, figsize=figsize)
 
-mallows_md_families = [fam['label'] for fam in srti_families if fam['culture'] == 'malasym']
-experiment.print_map_2d(show=False, textual=mallows_md_families, saveas='mallows_md_highlighted', legend=False, figsize=figsize)
-euclidean_families = [fam['label'] for fam in srti_families if fam['culture'] == 'euclidean']
-experiment.print_map_2d(show=False, textual=euclidean_families, saveas='euclidean_highlighted', legend=False, figsize=figsize)
-expectation_families = [fam['label'] for fam in srti_families if fam['culture'] == 'expectation']
-experiment.print_map_2d(show=False, textual=expectation_families, saveas='expectation_highlighted', legend=False, figsize=figsize)
+# mallows_md_families = [fam['label'] for fam in srti_families if fam['culture'] == 'malasym']
+# experiment.print_map_2d(show=False, textual=mallows_md_families, saveas='mallows_md_highlighted', legend=False, figsize=figsize)
+# euclidean_families = [fam['label'] for fam in srti_families if fam['culture'] == 'euclidean']
+# experiment.print_map_2d(show=False, textual=euclidean_families, saveas='euclidean_highlighted', legend=False, figsize=figsize)
+# expectation_families = [fam['label'] for fam in srti_families if fam['culture'] == 'expectation']
+# experiment.print_map_2d(show=False, textual=expectation_families, saveas='expectation_highlighted', legend=False, figsize=figsize)
 
-experiment.compute_feature(feature_id='number_of_solutions')
-experiment.compute_feature(feature_id='dist_from_id_1')
-experiment.compute_feature(feature_id='mutuality')
-experiment.compute_feature(feature_id='min_num_bps_matching')
-experiment.compute_feature(feature_id='avg_num_of_bps_for_rand_matching')
-experiment.compute_feature(feature_id='num_of_bps_min_weight')
+# experiment.compute_feature(feature_id='number_of_solutions')
+# experiment.compute_feature(feature_id='dist_from_id_1')
+# experiment.compute_feature(feature_id='mutuality')
+# experiment.compute_feature(feature_id='min_num_bps_matching')
+# experiment.compute_feature(feature_id='avg_num_of_bps_for_rand_matching')
+# experiment.compute_feature(feature_id='num_of_bps_min_weight')
 
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, feature_id='number_of_solutions', saveas=saveas+'_numsolutions', figsize=figsize, scale='log')
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='dist_from_id_1', saveas=saveas+'_rankdistortion', figsize=figsize)
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='mutuality', saveas=saveas+'_mutuality', figsize=figsize)
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='min_num_bps_matching', saveas=saveas+'_minbps', figsize=figsize)
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='avg_num_of_bps_for_rand_matching', saveas=saveas+'_avgbps', figsize=figsize)
-experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='num_of_bps_min_weight', saveas=saveas+'_numbps_minweight', figsize=figsize, scale='log')
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, feature_id='number_of_solutions', saveas=saveas+'_numsolutions', figsize=figsize, scale='log')
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='dist_from_id_1', saveas=saveas+'_rankdistortion', figsize=figsize)
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='mutuality', saveas=saveas+'_mutuality', figsize=figsize)
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='min_num_bps_matching', saveas=saveas+'_minbps', figsize=figsize)
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='avg_num_of_bps_for_rand_matching', saveas=saveas+'_avgbps', figsize=figsize)
+# experiment.print_map_2d_colored_by_feature(show=False, textual=textual, rounding=0, feature_id='num_of_bps_min_weight', saveas=saveas+'_numbps_minweight', figsize=figsize, scale='log')
