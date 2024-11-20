@@ -15,6 +15,7 @@ mapel/real_data/
 mapel/_past/
 mapel/_past_recent/
 trash/
+images/
 
 mapel/MAIN.py
 mapel/tmp.py
