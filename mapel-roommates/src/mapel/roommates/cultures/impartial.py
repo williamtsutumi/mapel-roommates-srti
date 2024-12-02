@@ -113,8 +113,7 @@ def generate_roommates_chaos_votes(num_agents: int = None, **kwargs):
             matrix[i][2 * j] = (i + j - 1) % (num_agents - 1)
             if j < num_rooms - 1:
                 matrix[i][2 * j + 1] = (num_rooms + i + j - 1) % (num_agents - 1)
-    # print(matrix)
-    # 10/0
+                
     votes = np.zeros([num_agents, num_agents - 1], dtype=int)
 
     for k1 in range(num_agents):
