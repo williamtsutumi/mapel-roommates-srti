@@ -113,7 +113,7 @@ def generate_roommates_chaos_votes(num_agents: int = None, **kwargs):
             matrix[i][2 * j] = (i + j - 1) % (num_agents - 1)
             if j < num_rooms - 1:
                 matrix[i][2 * j + 1] = (num_rooms + i + j - 1) % (num_agents - 1)
-                
+
     votes = np.zeros([num_agents, num_agents - 1], dtype=int)
 
     for k1 in range(num_agents):
@@ -121,8 +121,12 @@ def generate_roommates_chaos_votes(num_agents: int = None, **kwargs):
             for i in range(num_agents):
                 if k1 != i and matrix[i][matrix[k1][k2]] == matrix[k1][k2]:
                     votes[k1][k2] = i
+    # matrix[k1][k2] == pos(k1) in (votes[k1][k2]) preference list
+    # matrix[something][k] == k <=> votes[k1][k2] == something
+    print(votes)
+    print(matrix)
+    10/0
     return [[[votes[i][j]] for j in range(len(votes[i]))] for i in range(len(votes))]
-
 
 # # # # # # # # # # # # # # # #
 # LAST CLEANUP ON: 16.03.2022 #
